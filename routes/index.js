@@ -1,11 +1,10 @@
 var express = require("express");
 var router = express.Router();
 
-// import user model
-var User = require("../model/user");
+// import user model &
+const User = require("../model/user");
+const passport = require("passport");
 
-// passport for login handle
-var passport = require("passport");
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("index", { title: "Chat application" });
