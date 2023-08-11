@@ -6,15 +6,10 @@ var User = require("../model/user");
 
 // passport for login handle
 var passport = require("passport");
+
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.render("index", { title: "Chat application" });
+  res.render("messages", { title: "Send messages", user: req.user });
 });
 
-// logout and clear the session
-router.get("/logout", (req, res, next) => {
-  req.logout((err) => {
-    res.redirect("users/login");
-  });
-});
 module.exports = router;

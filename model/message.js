@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
 
-// use plm package to extent the user model
-
-var userSchemaDefinition = {
-    sender : {type}
-  username: { type: String, required: true },
-  password: { type: String },
+var messageSchemaDefinition = {
+  message: { type: String, required: true },
+  senderId: { type: String },
+  reciverId: { type: String, required: true },
+  date: {
+    type: Date,
+  },
 };
 
-var userSchema = new mongoose.Schema(userSchemaDefinition);
+var messageSchema = new mongoose.Schema(messageSchemaDefinition);
 
-module.exports = new mongoose.model("message", userSchema);
+module.exports = new mongoose.model("message", messageSchema);
