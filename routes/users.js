@@ -4,19 +4,20 @@ var router = express.Router();
 // local storage to store otp for the user
 const createdOTP = new Map();
 
-// import mailslurp-client
-const MailSlurp = require("mailslurp-client").default;
-// OR import { MailSlurp } from "mailslurp-client"
+// // import mailslurp-client
+// const MailSlurp = require("mailslurp-client").default;
+// // OR import { MailSlurp } from "mailslurp-client"
 
-// create a client
-const apiKey = process.env.MAILSLURP_API ?? "your-api-key";
-const mailslurp = new MailSlurp({ apiKey });
+// // create a client
+// const apiKey = process.env.MAILSLURP_API ?? "your-api-key";
+// const mailslurp = new MailSlurp({ apiKey });
 
 // import user model
-var User = require("../model/user");
+const User = require("../model/user");
 
 // passport for login handle
-var passport = require("passport");
+const passport = require("passport");
+
 const { create } = require("hbs");
 const { CreateDomainOptionsDomainTypeEnum } = require("mailslurp-client");
 
@@ -42,41 +43,43 @@ router.get("/login", function (req, res, next) {
 router.post(
   "/login", // name of strategy
   passport.authenticate("local", {
+    successRedirect: "/users/otp",
     failureMessage: "Invalid Credentails",
     failureRedirect: "/users/login", // if login fails
-  }),
-  (req, res) => {
-    res.redirect("otp/" + req.user.username);
-  }
+  })
+  // (req, res) => {
+  //   res.redirect("otp/" + req.user.username);
+  // }
 );
 
 // GET handler for the one time password
-router.get("/otp/:_username", async (req, res, next) => {
+router.get("/otp", async (req, res, next) => {
+  console.log(req.user);
   const otp = createOTP();
-  createdOTP.set(req.params._username, otp);
+  createdOTP.set(req.user.username, otp);
   console.log(createdOTP);
-  const inbox = await mailslurp.createInbox();
+  // const inbox = await mailslurp.createInbox();
   // const options = {
-  //   to: ["200503894@student.georgianc.on.ca"],
+  //   to: [req.params._username],
   //   subject: "One Time password ",
   //   body: `Your one time password is ${otp}`,
   // };
   // const sent = await mailslurp.sendEmail(inbox.id, options);
   res.render("users/otp", {
     title: "One time password check your email",
-    username: req.params._username,
+    username: req.user.username,
   });
 });
 
 //POST handler for the otp page
-router.post("/otp/:_username", (req, res, next) => {
-  if (createdOTP.has(req.params._username)) {
-    const userOtp = createdOTP.get(req.params._username);
+router.post("/otp", (req, res, next) => {
+  if (createdOTP.has(req.user.username)) {
+    const userOtp = createdOTP.get(req.user.username);
     console.log(userOtp);
     if (req.body.otp == userOtp) {
       console.log(req.body.otp);
       console.log(userOtp);
-      res.redirect("/messages");
+      res.redirect("/message");
     }
   } else {
     console.log("otp is not working");
