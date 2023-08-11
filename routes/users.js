@@ -4,13 +4,13 @@ var router = express.Router();
 // local storage to store otp for the user
 const createdOTP = new Map();
 
-// // import mailslurp-client
-// const MailSlurp = require("mailslurp-client").default;
-// // OR import { MailSlurp } from "mailslurp-client"
+// import mailslurp-client
+const MailSlurp = require("mailslurp-client").default;
+// OR import { MailSlurp } from "mailslurp-client"
 
-// // create a client
-// const apiKey = process.env.MAILSLURP_API ?? "your-api-key";
-// const mailslurp = new MailSlurp({ apiKey });
+// create a client
+const apiKey = process.env.MAILSLURP_API ?? "your-api-key";
+const mailslurp = new MailSlurp({ apiKey });
 
 // import user model
 const User = require("../model/user");
@@ -58,13 +58,13 @@ router.get("/otp", async (req, res, next) => {
   const otp = createOTP();
   createdOTP.set(req.user.username, otp);
   console.log(createdOTP);
-  // const inbox = await mailslurp.createInbox();
-  // const options = {
-  //   to: [req.params._username],
-  //   subject: "One Time password ",
-  //   body: `Your one time password is ${otp}`,
-  // };
-  // const sent = await mailslurp.sendEmail(inbox.id, options);
+  const inbox = await mailslurp.createInbox();
+  const options = {
+    to: [req.params._username],
+    subject: "One Time password ",
+    body: `Your one time password is ${otp}`,
+  };
+  const sent = await mailslurp.sendEmail(inbox.id, options);
   res.render("users/otp", {
     title: "One time password check your email",
     username: req.user.username,
