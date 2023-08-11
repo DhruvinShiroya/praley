@@ -1,0 +1,25 @@
+
+<div class="container mt-5">
+<h1>Contacts</h1>
+  <h2>{{user.username}}</h2>
+  <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each result.data}}
+          <tr>
+            <td>{{this.username}}</td>
+            <td>
+              <form action="/action" method="post">
+                <input type="hidden" name="username" value="{{this.username}}">
+                <button type="submit" class="btn btn-primary">Action</button>
+              </form>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+</div>

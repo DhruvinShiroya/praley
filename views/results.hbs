@@ -1,0 +1,17 @@
+<h1>{{title}}</h1>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each results}}
+          <tr>
+            <td>{{this.username}}</td>
+            <td>
+              <a class="btn btn-primary" href="/contacts/add/{{this.username}}">Add Contact</a>
+            </td>
+          </tr>
+        {{/each}}
