@@ -9,20 +9,23 @@ require("dotenv").config();
 var config = require("./config/global");
 var mongoose = require("mongoose");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var messagesRouter = require("./routes/messages");
-
-var app = express();
-
-// provide wrapper around app
-const server = require("http").createServer(app);
-const io = require("socket.io")(server);
-
 // https://www.passportjs.org/concepts/authentication/sessions/
 //import passport and session module
 var passport = require("passport");
 var session = require("express-session");
+
+// routes for the express application
+var indexRouter = require("./routes/index");
+var usersRouter = require("./routes/users");
+var messagesRouter = require("./routes/messages");
+var contactRouter = require("./routes/contacts");
+
+var app = express();
+
+// provide wrapper around app
+// const server = require("http").createServer(app);
+// const io = require("socket.io")(server);
+
 // import user model
 var User = require("./model/user");
 
@@ -34,20 +37,20 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "publicSoon, Wilson ")));
+app.use(express.static(path.join(__dirname, "public")));
 
 //configure session  , specify secrest value for hashing , two option
 app.use(
   session({
-    secret: "summer23twoauthentication", // encryption / protecting cookie
-    resave: false, // forces the session to be saved back to the store without modification
+    secret: process.env.SESSION_SECRET, // encryption / protecting cookie
+    resave: false,
     saveUninitialized: false,
   })
 );
 
 // configure passport initialization
 app.use(passport.initialize());
-app.use(passport, session());
+app.use(passport.session());
 // implement local strategy
 
 passport.use(User.createStrategy()); // get it from plm module
@@ -57,6 +60,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/message", messagesRouter);
+app.use("/contacts", contactRouter);
 //connect to mongo db
 mongoose
   .connect(config.db, { useNewUrlParser: true, useUnifiedTopology: true })
