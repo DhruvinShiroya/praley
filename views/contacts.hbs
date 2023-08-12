@@ -1,25 +1,36 @@
-
 <div class="container mt-5">
-<h1>Contacts</h1>
+  <h1>Contacts</h1>
   <h2>{{user.username}}</h2>
   <table class="table table-bordered table-striped">
-      <thead>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Created At</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each result}}
         <tr>
-          <th>Username</th>
-          <th>Action</th>
+          <td>{{this.name}}</td>
+          <td>{{this.contactEmail}}</td>
+          <td>{{toShortDate this.date}}</td>
+          <td>
+
+            <a href="/message/{{this.name}}" class="btn btn-primary">Message</a>
+            <a
+              href="/contacts/edit/{{this.name}}"
+              class="btn btn-primary"
+            >Edit</a>
+            <a
+              href="/contacts/delete/{{this.name}}"
+              class="btn btn-danger"
+              onclick="return confirmDeletionPopUp({{this.name}});"
+            >Delete</a>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        {{#each result.data}}
-          <tr>
-            <td>{{this.username}}</td>
-            <td>
-              <form action="/action" method="post">
-                <input type="hidden" name="username" value="{{this.username}}">
-                <button type="submit" class="btn btn-primary">Action</button>
-              </form>
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
+      {{/each}}
+    </tbody>
+  </table>
 </div>

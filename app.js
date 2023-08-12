@@ -13,6 +13,7 @@ var mongoose = require("mongoose");
 //import passport and session module
 var passport = require("passport");
 var session = require("express-session");
+const githubStrategy = require("passport-github2").Strategy;
 
 // routes for the express application
 var indexRouter = require("./routes/index");
@@ -53,6 +54,44 @@ app.use(passport.initialize());
 app.use(passport.session());
 // implement local strategy
 
+// implement local Outh
+passport.use(
+  new githubStrategy(
+    {
+      clientID: config.github.clientId,
+      clientSecret: config.github.clientSecret,
+      callbackURL: config.github.callbackUrl,
+    },
+    // create async callback function
+    // profile is github profile
+    async (accessToken, refreshToken, profile, done) => {
+      // search user by ID
+      let user = await User.findOne({
+        oauthId: profile.id,
+      });
+
+      console.log(user);
+      // user exists (returning user)
+      if (user) {
+        // no need to do anything else
+        return done(null, user);
+      } else {
+        // new user so register them in the db
+        const newUser = new User({
+          username: profile.username,
+          oauthId: profile.id,
+          oauthProvider: "Github",
+          created: Date.now(),
+        });
+        // add to DB
+        const savedUser = await newUser.save();
+        // return
+        return done(null, savedUser);
+      }
+    }
+  )
+);
+
 passport.use(User.createStrategy()); // get it from plm module
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -72,6 +111,13 @@ mongoose
   }); // do something after connecting
 
 // connect
+
+// HBS Helper Method to convert long date to short date
+const hbs = require("hbs");
+// helper function to format date values
+hbs.registerHelper("toShortDate", (longDateValue) => {
+  return new hbs.SafeString(longDateValue.toLocaleDateString("en-CA"));
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

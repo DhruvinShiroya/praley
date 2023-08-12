@@ -9,8 +9,8 @@ const MailSlurp = require("mailslurp-client").default;
 // OR import { MailSlurp } from "mailslurp-client"
 
 // create a client
-const apiKey = process.env.MAILSLURP_API ?? "your-api-key";
-const mailslurp = new MailSlurp({ apiKey });
+// const apiKey = process.env.MAILSLURP_API ?? "your-api-key";
+// const mailslurp = new MailSlurp({ apiKey });
 
 // import user model
 const User = require("../model/user");
@@ -58,13 +58,13 @@ router.get("/otp", async (req, res, next) => {
   const otp = createOTP();
   createdOTP.set(req.user.username, otp);
   console.log(createdOTP);
-  const inbox = await mailslurp.createInbox();
-  const options = {
-    to: [req.params._username],
-    subject: "One Time password ",
-    body: `Your one time password is ${otp}`,
-  };
-  const sent = await mailslurp.sendEmail(inbox.id, options);
+  // const inbox = await mailslurp.createInbox();
+  // const options = {
+  //   to: [req.params._username],
+  //   subject: "One Time password ",
+  //   body: `Your one time password is ${otp}`,
+  // };
+  // const sent = await mailslurp.sendEmail(inbox.id, options);
   res.render("users/otp", {
     title: "One time password check your email",
     username: req.user.username,
@@ -118,3 +118,22 @@ module.exports = router;
 function createOTP() {
   return Math.floor(Math.random() * (999999 - 100000) + 100000);
 }
+
+// GET handler for the /github
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user.email"] })
+);
+
+// GET handler for the /github/callback
+
+router.get(
+  "/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: "/users/login",
+    failureMessage: "Git hub login failed",
+  }),
+  (req, res, next) => {
+    res.redirect("/message");
+  }
+);

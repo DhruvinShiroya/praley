@@ -28,7 +28,7 @@ router.get("/", isAuthorized, async function (req, res, next) {
     res.render("messages", {
       title: "Send messages",
       user: req.user,
-      dataset: doc,
+      result: doc,
     });
   } else {
     res.render("messages", {

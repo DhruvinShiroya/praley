@@ -1,0 +1,29 @@
+<div class="container mt-4">
+  <h1>Edit User</h1>
+  <form method="post" class="needs-validation" novalidate>
+    <div class="form-group">
+      <label for="name">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="name"
+        minlength="3"
+        maxlength="30"
+        placeholder="{{result.name}}"
+        required
+      />
+      <input
+        type="hidden"
+        id="oldName"
+        name="oldName"
+        value="{{result.name}}"
+        required
+      />
+      <div class="invalid-feedback">
+        Please provide a username.
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
